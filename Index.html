@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>FinTrack - Smart Finance</title>
+    <title>SpendWise - Smart Finance</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,6 +14,7 @@
 <div class="bg-shape shape1"></div>
 <div class="bg-shape shape2"></div>
 
+<!-- NAVBAR -->
 <header class="navbar">
     <div class="logo">
         <div class="logo-icon">
@@ -25,178 +26,240 @@
 
     <nav>
         <a href="#">Home</a>
-        <a href="#">Features</a>
-        <a href="#">Pricing</a>
         <a href="login.html" class="btn-outline">Login</a>
         <a href="register.html" class="btn-primary">Get Started</a>
     </nav>
 </header>
 
+<!-- HERO -->
 <section class="hero">
-    <div class="hero-left">
-        <h1>SpendWise – Smart Expense & Income Management</h1>
-<p>
-    Track your daily expenses, monitor income, manage categories, and 
-    analyze weekly and monthly spending trends through a powerful and 
-    easy-to-use financial dashboard.
-</p>
+    <div class="hero-content">
+        <h1>Take Control of Your Financial Future</h1>
+        
+        <p>Gain complete visibility into your income and expenses with a powerful, easy-to-use expense management solution.</p>
+        
+        <p>Track transactions in real time, analyze spending trends through detailed visual reports, and make informed financial decisions with confidence.</p>
+        
         <div class="hero-buttons">
-            <a href="#" class="btn-primary">Start Now</a>
-            <a href="#" class="btn-outline">View Demo</a>
+            <a href="#" class="btn-primary">Start Free Today →</a>
+        </div>
+    </div>
+</section>
+<!-- DASHBOARD -->
+<section class="dashboard">
+
+    <!-- TOP CARDS -->
+    <div class="overview-grid">
+        <div class="overview-card">
+            <h4>Total Expenses</h4>
+            <h2>₹ 85,000</h2>
+        </div>
+
+        <div class="overview-card">
+            <h4>Total Month</h4>
+            <h2>₹ 10,200</h2>
+        </div>
+
+        <div class="overview-card">
+            <h4>Transactions</h4>
+            <h2>₹ 7</h2>
         </div>
     </div>
 
-<div class="hero-right">
-    <div class="dashboard">
-        <div class="dashboard-header">
-            <div class="circle red"></div>
-            <div class="circle yellow"></div>
-            <div class="circle green"></div>
+    <!-- CHART SECTION -->
+    <div class="chart-grid">
+
+        <!-- Weekly Trend -->
+        <div class="card">
+            <h3>Weekly Spending Trend</h3>
+            <canvas id="weeklyChart"></canvas>
         </div>
 
-        <div class="dashboard-body">
-            <div class="chart-area"></div>
+        <!-- Spending by Category -->
+        <div class="card">
+            <h3>Spending by Category</h3>
+            <canvas id="categoryChart"></canvas>
+        </div>
 
-            <div class="cards-row">
-                <div class="stat-card"></div>
-                <div class="stat-card"></div>
+    </div>
+
+    <!-- BOTTOM SECTION -->
+    <div class="bottom-grid">
+
+        <!-- Recent Expenses -->
+        <div class="card">
+            <h3>Recent Expenses</h3>
+
+            <div class="expense-row">
+                <span>☕ Starbucks</span>
+                <strong>-₹ 550</strong>
+            </div>
+
+            <div class="expense-row">
+                <span>🚗 Uber</span>
+                <strong>-₹ 1530</strong>
+            </div>
+
+            <div class="expense-row">
+                <span>🛒 Grocery</span>
+                <strong>-₹ 3200</strong>
+            </div>
+
+            <button class="add-btn">+ Add Expense</button>
+        </div>
+
+        <!-- Top Categories with Icons -->
+        <div class="card">
+            <h3>Top Spending Categories</h3>
+
+            <div class="category-row">
+                <div class="category-left">
+                    <div class="cat-icon purple">🎓</div>
+                    <span>Education</span>
+                </div>
+                <strong>₹ 12,000</strong>
+            </div>
+
+            <div class="category-row">
+                <div class="category-left">
+                    <div class="cat-icon green">🍔</div>
+                    <span>Food</span>
+                </div>
+                <strong>₹ 4,200</strong>
+            </div>
+
+            <div class="category-row">
+                <div class="category-left">
+                    <div class="cat-icon pink">🎮</div>
+                    <span>Entertainment</span>
+                </div>
+                <strong>₹ 1,000</strong>
             </div>
         </div>
+
     </div>
-</div>
 
 </section>
 
-<section id="features" class="features">
-    <div class="feature-box">
-        <h3>Smart Tracking</h3>
-        <p>Monitor income and expenses easily.</p>
-    </div>
+<!-- CHART JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <div class="feature-box">
-        <h3>Clean Dashboard</h3>
-        <p>Simple visual layout for better clarity.</p>
-    </div>
+<script>
+const weeklyCtx = document.getElementById('weeklyChart');
+new Chart(weeklyCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets: [{
+            label: 'Spending',
+            data: [500, 800, 600, 900, 750, 1100, 650],
+            backgroundColor: [
+                '#8b5cf6','#8b5cf6','#8b5cf6',
+                '#ec4899','#ec4899','#ec4899','#8b5cf6'
+            ],
+            borderRadius: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+    }
+});
 
-    <div class="feature-box">
-        <h3>Secure & Private</h3>
-        <p>Advanced protection for your data.</p>
+const categoryCtx = document.getElementById('categoryChart');
+new Chart(categoryCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Education','Food','Entertainment'],
+        datasets: [{
+            data: [12000, 4200, 1000],
+            backgroundColor: ['#8b5cf6','#22c55e','#ec4899']
+        }]
+    },
+    options: {
+        responsive: true
+    }
+});
+</script>
+<!-- FEATURES SECTION -->
+<section class="features">
+    <h2>Everything You Need to Manage Your Money</h2>
+    <p class="feature-subtitle">
+        Powerful features designed to make expense tracking effortless and insightful
+    </p>
+
+    <div class="feature-grid">
+
+        <div class="feature-card">
+            <div class="feature-icon purple-icon">📊</div>
+            <h4>Visual Analytics</h4>
+            <p>Beautiful charts and graphs to understand your spending patterns at a glance</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon pink-icon">💳</div>
+            <h4>Smart Categories</h4>
+             <p>Organize your transactions into customizable categories to gain clearer insights.</p>
+             </div>
+
+        <div class="feature-card">
+            <div class="feature-icon blue-icon">📈</div>
+            <h4>Smart Insights</h4>
+            <p>Get AI-powered recommendations to optimize your spending and save more</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon green-icon">📅</div>
+            <h4>Easy Tracking</h4>
+            <p>Add expenses in seconds with smart categorization and recurring transactions</p>
+        </div>
+
     </div>
 </section>
 
-<section class="how-it-works">
-    <h2>How It Works</h2>
+<!-- CTA SECTION -->
+<section class="cta">
+    <h2>Ready to Take Control of Your Finances?</h2>
+    <p>Join thousands of users who are already tracking smarter and saving more.</p>
 
-    <div class="steps">
-        <div class="step">
-            <div class="step-number">01</div>
-            <h3>Create Account</h3>
-            <p>Sign up and set up your financial profile in minutes.</p>
-        </div>
-
-        <div class="step">
-            <div class="step-number">02</div>
-            <h3>Track Transactions</h3>
-            <p>Add income and expenses easily with smart categorization.</p>
-        </div>
-
-        <div class="step">
-            <div class="step-number">03</div>
-            <h3>Analyze Growth</h3>
-            <p>View reports and insights to improve your financial habits.</p>
-        </div>
+    <div class="cta-buttons">
+        <a href="#" class="cta-primary">Start Free Today →</a>
+      
     </div>
+
+    <span class="cta-note">
+        No credit card required • Free forever • Setup in 2 minutes
+    </span>
 </section>
 
-<section class="testimonials">
-    <h2>What Our Users Say</h2>
-
-    <div class="testimonial-grid">
-        <div class="testimonial-card">
-            <p>"FinTrack completely changed how I manage my money."</p>
-            <h4>- Sarah K.</h4>
-        </div>
-
-        <div class="testimonial-card">
-            <p>"The clean dashboard makes tracking finances effortless."</p>
-            <h4>- Daniel R.</h4>
-        </div>
-
-        <div class="testimonial-card">
-            <p>"Simple, powerful, and beautifully designed."</p>
-            <h4>- Priya M.</h4>
-        </div>
-    </div>
-</section>
-
-<section class="faq">
-    <h2>Frequently Asked Questions</h2>
-
-    <div class="faq-item">
-        <h4>Is my data secure?</h4>
-        <p>Yes, we use advanced encryption to protect your information.</p>
-    </div>
-
-    <div class="faq-item">
-        <h4>Can I use it for free?</h4>
-        <p>Yes, we offer a free basic plan with essential features.</p>
-    <!-- </div
-     > -->
-
-    <div class="faq-item">
-        <h4>Does it work on mobile?</h4>
-        <p>Yes, FinTrack is fully responsive and works on all devices.</p>
-    </div>
-</section>
-
-<!-- <footer class="footer">
-
+<!-- FOOTER -->
+<footer class="footer">
     <div class="footer-container">
 
-        <div class="footer-col">
-            <div class="footer-logo">
-                <div class="logo-icon">
-                    <span class="big-f">F</span>
-                    <span class="small-t">t</span>
-                </div>
-                FinTrack
+        <div class="footer-left">
+            <h3>💠 ExpenseTracker</h3>
+            <p>Your personal finance companion. Track, analyze, and optimize your spending with ease.</p>
+        </div>
+
+        <div class="footer-links">
+            <div>
+                <h4>Product</h4>
+                <a href="#">Dashboard</a>
+                <a href="#">Features</a>
+                <a href="#">Pricing</a>
             </div>
-            <p>
-                Smart financial management platform designed to help you 
-                track expenses, manage budgets and grow confidently.
-            </p>
-        </div>
 
-        <div class="footer-col">
-            <h4>Product</h4>
-            <a href="#">Features</a>
-            <a href="#">Pricing</a>
-            <a href="#">Security</a>
-            <a href="#">Updates</a>
-        </div>
-
-        <div class="footer-col">
-            <h4>Company</h4>
-            <a href="#">About Us</a>
-            <a href="#">Careers</a>
-            <a href="#">Blog</a>
-            <a href="#">Contact</a>
-        </div>
-
-        <div class="footer-col">
-            <h4>Support</h4>
-            <a href="#">Help Center</a>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
+            <div>
+                <h4>Company</h4>
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+                <a href="#">Privacy</a>
+            </div>
         </div>
 
     </div>
 
     <div class="footer-bottom">
-        © 2026 FinTrack. All Rights Reserved.
+        © 2026 ExpenseTracker. All rights reserved.
     </div>
-</footer> -->
-
-
-</body>
-</html>
+</footer>
