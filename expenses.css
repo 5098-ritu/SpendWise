@@ -1,0 +1,147 @@
+/* Container */
+.expenses-container {
+    padding: 60px 10%;
+}
+
+/* Title Section */
+.expenses-container h2 {
+    margin-bottom: 5px;
+}
+
+.sub-info {
+    color: #6b7280;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+/* Table Card */
+.expenses-table {
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+/* Header + Rows */
+.table-header,
+.table-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr;
+    padding: 18px 25px;
+    align-items: center;
+}
+
+.table-header {
+    background: #f3f4f6;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #6b7280;
+}
+
+.table-row {
+    border-top: 1px solid #f1f1f1;
+    transition: 0.2s ease;
+}
+
+.table-row:hover {
+    background: #f9fafb;
+}
+
+/* Expense Title */
+.expense-info strong {
+    font-size: 14px;
+}
+
+/* Amount */
+.amount {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Delete Button */
+.delete-btn {
+    text-decoration: none;
+    font-size: 16px;
+    color: #ef4444;
+    transition: 0.2s ease;
+}
+
+.delete-btn:hover {
+    transform: scale(1.2);
+}
+
+/* Category Badges */
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+    display: inline-block;
+}
+
+/* Category Colors */
+.food { background: #ef4444; }
+.transportation { background: #3b82f6; }
+.entertainment { background: #ec4899; }
+.bills { background: #f59e0b; }
+.education { background: #14b8a6; }
+.shopping { background: #8b5cf6; }
+.health { background: #10b981; }
+.other { background: #6b7280; }
+
+/* FILTER BAR */
+
+.filters{
+background:white;
+padding:18px;
+border-radius:12px;
+box-shadow:0 6px 20px rgba(0,0,0,0.05);
+margin-bottom:25px;
+}
+
+.filters form{
+display:flex;
+gap:15px;
+}
+
+.filters input,
+.filters select{
+padding:10px 14px;
+border-radius:8px;
+border:1px solid #d1d5db;
+font-size:14px;
+flex:1;
+}
+
+.filters button{
+background:#3b82f6;
+border:none;
+color:white;
+padding:10px 18px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.filters button:hover{
+background:#2563eb;
+}
+
+.expense-info{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.expense-icon{
+width:34px;
+height:34px;
+background:#f3f4f6;
+border-radius:8px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#374151;
+font-size:14px;
+}
