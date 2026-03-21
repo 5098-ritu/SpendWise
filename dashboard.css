@@ -307,3 +307,212 @@ grid-template-columns:1fr;
 }
 
 }
+
+/* BUDGET */
+
+.budget-box{
+background:white;
+padding:18px;
+border-radius:14px;
+box-shadow:0 6px 15px rgba(0,0,0,0.06);
+margin-bottom:25px;
+}
+
+.budget-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+}
+
+.budget-form{
+display:flex;
+gap:8px;
+}
+
+.budget-form input{
+padding:6px 10px;
+border-radius:8px;
+border:1px solid #e5e7eb;
+outline:none;
+width:120px;
+}
+
+.budget-form button{
+background:#6366f1;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.budget-stats{
+display:flex;
+justify-content:space-between;
+font-size:13px;
+margin-top:8px;
+}
+
+/* PROGRESS */
+
+.progress-bar{
+height:8px;
+background:#e5e7eb;
+border-radius:10px;
+margin:10px 0;
+}
+
+.progress-fill{
+height:100%;
+background:#6366f1;
+border-radius:10px;
+}
+
+/* STATUS COLORS */
+
+.budget-box.safe{
+border-left:4px solid #10b981;
+}
+
+.budget-box.warning{
+border-left:4px solid #f59e0b;
+}
+
+.budget-box.danger{
+border-left:4px solid #ef4444;
+}
+
+.budget-msg{
+font-size:13px;
+margin-top:6px;
+}
+
+/* ===== BUDGET BOX ===== */
+
+.budget-box{
+background:#ffffff;
+padding:20px;
+border-radius:14px;
+margin-bottom:25px;
+box-shadow:0 8px 20px rgba(0,0,0,0.05);
+}
+
+/* top section */
+.budget-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+}
+
+/* form */
+.budget-form input{
+padding:8px;
+border:1px solid #e5e7eb;
+border-radius:6px;
+outline:none;
+}
+
+.budget-form button{
+padding:8px 12px;
+border:none;
+background:#3b82f6;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* stats */
+.budget-stats{
+display:flex;
+justify-content:space-between;
+font-size:14px;
+margin:10px 0;
+}
+
+/* progress */
+.progress-bar{
+height:8px;
+background:#e5e7eb;
+border-radius:10px;
+overflow:hidden;
+}
+
+.progress-fill{
+height:100%;
+background:#3b82f6;
+}
+
+/* message */
+.budget-msg{
+margin-top:10px;
+font-size:13px;
+}
+
+/* ===== STATES ===== */
+
+.budget-box.safe{
+border-left:4px solid #10b981;
+}
+
+.budget-box.warning{
+border-left:4px solid #f59e0b;
+}
+
+.budget-box.danger{
+border-left:4px solid #ef4444;
+}
+
+body.dark .budget-box{
+background:#1f2937;
+color:#f9fafb;
+}
+
+body.dark .budget-form input{
+background:#374151;
+color:white;
+border:1px solid #4b5563;
+}
+
+body.dark .budget-form button{
+background:#2563eb;
+}
+
+body.dark .progress-bar{
+background:#374151;
+}
+
+/* PDF FIXES */
+
+.dashboard-container{
+max-width:100%;
+}
+
+/* prevent breaking */
+.card,
+.chart-card,
+.recent-card,
+.budget-box{
+page-break-inside: avoid;
+break-inside: avoid;
+}
+
+/* FIX GRID FOR PDF */
+@media print{
+
+.cards-grid,
+.charts-grid,
+.charts-row{
+display:block !important;
+}
+
+.chart-card,
+.card,
+.recent-card,
+.budget-box{
+width:100% !important;
+margin-bottom:20px;
+}
+
+}

@@ -145,3 +145,90 @@ justify-content:center;
 color:#374151;
 font-size:14px;
 }
+
+/* ===== DARK MODE FIX ===== */
+
+body.dark{
+    background:#0f172a;
+    color:#e2e8f0;
+}
+
+/* NAVBAR */
+body.dark .navbar a{
+    color:#cbd5f5;
+}
+
+/* CONTAINER */
+body.dark .expenses-container{
+    background:transparent;
+}
+
+/* FILTER BAR */
+body.dark .filters{
+    background:#1e293b;
+    padding:15px;
+    border-radius:10px;
+}
+
+body.dark input,
+body.dark select{
+    background:#0f172a;
+    color:#e2e8f0;
+    border:1px solid #334155;
+}
+
+body.dark input::placeholder{
+    color:#94a3b8;
+}
+
+/* TABLE */
+body.dark .expenses-table{
+    background:#1e293b;
+    border-radius:10px;
+}
+
+/* HEADER */
+body.dark .table-header{
+    background:#334155;
+    color:#e2e8f0;
+}
+
+/* ROWS */
+body.dark .table-row{
+    border-bottom:1px solid #334155;
+}
+
+body.dark .table-row:hover{
+    background:#334155;
+}
+
+/* TEXT */
+body.dark .amount{
+    color:#e2e8f0;
+}
+
+/* ICON BOX */
+body.dark .expense-icon{
+    background:#334155;
+    color:#e2e8f0;
+}
+
+/* BADGES */
+body.dark .badge{
+    opacity:0.9;
+}
+
+/* DROPDOWN */
+body.dark .profile-dropdown{
+    background:#1e293b;
+    color:#e2e8f0;
+}
+
+body.dark .profile-dropdown button,
+body.dark .profile-dropdown a{
+    color:#e2e8f0;
+}
+
+body.dark .profile-dropdown button:hover{
+    background:#334155;
+}

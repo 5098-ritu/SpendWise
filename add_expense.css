@@ -82,3 +82,65 @@
     color: #374151;
     background: #f9fafb;
 }
+
+/* DARK MODE FULL FIX */
+
+body.dark{
+    background:#0f172a;
+    color:#e2e8f0;
+}
+
+/* CARD */
+body.dark .add-card{
+    background:#1e293b;
+    color:#e2e8f0;
+}
+
+/* LABELS */
+body.dark label{
+    color:#cbd5f5;
+}
+
+/* INPUTS */
+body.dark input,
+body.dark select{
+    background:#0f172a;
+    color:#e2e8f0;
+    border:1px solid #334155;
+}
+
+/* INPUT PLACEHOLDER */
+body.dark input::placeholder{
+    color:#94a3b8;
+}
+
+/* BUTTON */
+body.dark .btn-primary{
+    background:linear-gradient(90deg,#6366f1,#ec4899);
+}
+
+/* CANCEL BUTTON */
+body.dark .btn-cancel{
+    color:#cbd5f5;
+}
+
+/* NAVBAR LINKS */
+body.dark .navbar a{
+    color:#cbd5f5;
+}
+
+/* DROPDOWN */
+body.dark .profile-dropdown{
+    background:#1e293b;
+    color:#e2e8f0;
+}
+
+body.dark .profile-dropdown button,
+body.dark .profile-dropdown a{
+    color:#e2e8f0;
+}
+
+body.dark .profile-dropdown button:hover{
+    background:#334155;
+}
+

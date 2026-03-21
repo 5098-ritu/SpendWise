@@ -149,6 +149,65 @@ WHERE user_id=$user_id
 ORDER BY expense_date DESC 
 LIMIT 5");
 
+/* ======================
+   BUDGET SYSTEM
+====================== */
+
+// Save Budget
+if(isset($_POST['budget'])){
+$amount = $_POST['budget'];
+$month = date('m');
+$year = date('Y');
+
+$conn->query("
+DELETE FROM budgets 
+WHERE user_id=$user_id 
+AND month=$month 
+AND year=$year
+");
+
+$conn->query("
+INSERT INTO budgets(user_id,amount,month,year)
+VALUES($user_id,$amount,$month,$year)
+");
+}
+
+// Fetch Budget
+$budget = 0;
+
+$q = $conn->query("
+SELECT amount FROM budgets
+WHERE user_id=$user_id
+AND month=MONTH(CURDATE())
+AND year=YEAR(CURDATE())
+LIMIT 1
+");
+
+if($q && $q->num_rows > 0){
+$budget = $q->fetch_assoc()['amount'];
+}
+
+// Calculate usage
+$usagePercent = 0;
+$budgetMsg = "No budget set";
+$budgetClass = "";
+
+if($budget > 0){
+
+$usagePercent = ($month_total / $budget) * 100;
+
+if($usagePercent >= 100){
+$budgetMsg = "⚠️ You are overspending!";
+$budgetClass = "danger";
+}elseif($usagePercent >= 80){
+$budgetMsg = "⚠️ You used ".round($usagePercent)."% of your budget";
+$budgetClass = "warning";
+}else{
+$budgetMsg = "✅ You are within budget";
+$budgetClass = "safe";
+}
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -166,11 +225,11 @@ LIMIT 5");
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 </head>
 
 <body>
-
 <header class="navbar">
 
 <div class="logo">
@@ -182,12 +241,39 @@ SpendWise
 </div>
 
 <nav>
-<a href="dashboard.php" class="active">Dashboard</a>
+<a href="dashboard.php">Dashboard</a>
 <a href="add_expense.php">Add Expense</a>
 <a href="expenses.php">Expenses</a>
 <a href="categories.php">Categories</a>
 <a href="analytics.php">Analytics</a>
-<a href="logout.php" class="btn-outline">Logout</a>
+
+<!-- PROFILE ICON ONLY -->
+<div class="profile-menu">
+
+<div class="profile-icon" onclick="toggleProfile()">
+<?php echo strtoupper(substr($_SESSION['username'],0,1)); ?>
+</div>
+
+<div class="profile-dropdown" id="profileDropdown">
+
+<div class="profile-header">
+<strong><?php echo $_SESSION['username']; ?></strong>
+<p><?php echo $_SESSION['email'] ?? ''; ?></p>
+</div>
+
+<hr>
+
+<button onclick="toggleDarkMode()">🌙 Dark Mode</button>
+<button onclick="downloadPDF()">📄 Export PDF</button>
+
+<hr>
+
+<a href="logout.php" class="logout-btn">Logout</a>
+
+</div>
+
+</div>
+
 </nav>
 
 </header>
@@ -229,6 +315,37 @@ SpendWise
 <h2>₹ <?php echo number_format($largest,2); ?></h2>
 <p>biggest purchase</p>
 </div>
+
+</div>
+
+<!-- BUDGET SECTION -->
+
+<div class="budget-box <?php echo $budgetClass; ?>">
+
+<div class="budget-top">
+
+<div>
+<h3>💰 Monthly Budget</h3>
+<p>Track your spending limit</p>
+</div>
+
+<form method="POST" class="budget-form">
+<input type="number" name="budget" placeholder="Set budget" required>
+<button type="submit">Save</button>
+</form>
+
+</div>
+
+<div class="budget-stats">
+<span>Budget: ₹ <?php echo number_format($budget,2); ?></span>
+<span>Spent: ₹ <?php echo number_format($month_total,2); ?></span>
+</div>
+
+<div class="progress-bar">
+<div class="progress-fill" style="width:<?php echo min($usagePercent,100); ?>%"></div>
+</div>
+
+<p class="budget-msg"><?php echo $budgetMsg; ?></p>
 
 </div>
 
@@ -438,5 +555,114 @@ legend:{position:'bottom'}
 
 </script>
 
+<script>
+function toggleProfile(){
+    const menu = document.getElementById("profileDropdown");
+
+    if(menu.style.display === "block"){
+        menu.style.display = "none";
+    }else{
+        menu.style.display = "block";
+    }
+}
+
+/* FIX CLICK ISSUE */
+document.getElementById("profileDropdown").addEventListener("click", function(e){
+    e.stopPropagation();
+});
+
+/* close when clicking outside */
+window.addEventListener("click", function(e){
+    if(!e.target.closest(".profile-menu")){
+        document.getElementById("profileDropdown").style.display = "none";
+    }
+});
+</script>
+<script>
+function downloadPDF(){
+
+const element = document.querySelector(".dashboard-container");
+
+/* SAVE THEME */
+const isDark = document.body.classList.contains("dark");
+
+/* REMOVE DARK MODE FOR PDF */
+document.body.classList.remove("dark");
+
+/* FIX WIDTH FOR A4 */
+element.style.width = "800px";
+element.style.margin = "auto";
+
+/* CONVERT CHARTS → IMAGES */
+const canvases = document.querySelectorAll("canvas");
+const images = [];
+
+canvases.forEach((canvas, i) => {
+    const img = document.createElement("img");
+    img.src = canvas.toDataURL("image/png");
+    img.style.width = "100%";
+    img.style.marginBottom = "20px";
+    images.push({canvas, img});
+    canvas.parentNode.replaceChild(img, canvas);
+});
+
+/* PDF OPTIONS */
+const opt = {
+margin: 10,
+filename: 'SpendWise_Dashboard.pdf',
+image: { type: 'jpeg', quality: 1 },
+html2canvas: { 
+    scale: 2,
+    useCORS: true
+},
+jsPDF: { 
+    unit: 'mm', 
+    format: 'a4', 
+    orientation: 'portrait' 
+},
+pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+};
+
+/* GENERATE PDF */
+html2pdf().set(opt).from(element).save().then(() => {
+
+/* RESTORE CHARTS */
+images.forEach(obj => {
+    obj.img.parentNode.replaceChild(obj.canvas, obj.img);
+});
+
+/* RESTORE THEME */
+if(isDark){
+    document.body.classList.add("dark");
+}
+
+/* RESET WIDTH */
+element.style.width = "";
+element.style.margin = "";
+
+});
+
+
+}
+</script>
+<script>
+
+/* APPLY SAVED THEME */
+if(localStorage.getItem("theme") === "dark"){
+    document.body.classList.add("dark");
+}
+
+/* TOGGLE DARK MODE */
+function toggleDarkMode(){
+    document.body.classList.toggle("dark");
+
+    if(document.body.classList.contains("dark")){
+        localStorage.setItem("theme","dark");
+    }else{
+        localStorage.setItem("theme","light");
+    }
+}
+
+</script>
 </body>
 </html>
