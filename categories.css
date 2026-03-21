@@ -1,0 +1,141 @@
+.category-container {
+    padding: 60px 8%;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.category-header p {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.btn-add {
+    background: #2563eb;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.category-card {
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    transition: 0.2s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.category-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: #eef2ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #4f46e5;
+}
+
+.category-card h3 {
+    margin: 15px 0 10px;
+}
+
+.meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 12px;
+}
+
+.progress-bar {
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: #4f46e5;
+}
+
+.delete-btn {
+    text-decoration: none;
+    font-size: 16px;
+    color: #ef4444;
+}
+/* ===== DARK MODE FIX ===== */
+
+body.dark{
+    background:#0f172a;
+    color:#e2e8f0;
+}
+
+/* CATEGORY CARD */
+body.dark .category-card{
+    background:#1e293b;
+    color:#e2e8f0;
+}
+
+/* CATEGORY TITLE (IMPORTANT FIX) */
+body.dark .category-card h3{
+    color:#f1f5f9;   /* 👈 THIS FIXES INVISIBLE TEXT */
+}
+
+/* META TEXT */
+body.dark .meta span{
+    color:#cbd5f5;
+}
+
+/* ICON BOX */
+body.dark .category-icon{
+    background:#334155;
+    color:#e2e8f0;
+}
+
+/* PROGRESS BAR */
+body.dark .progress-bar{
+    background:#334155;
+}
+
+body.dark .progress{
+    background:#6366f1;
+}
+
+/* DELETE BUTTON */
+body.dark .delete-btn{
+    color:#f87171;
+}
+
+/* DROPDOWN */
+body.dark .profile-dropdown{
+    background:#1e293b;
+    color:#e2e8f0;
+}
+
+
