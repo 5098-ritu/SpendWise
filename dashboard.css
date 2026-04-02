@@ -516,3 +516,9 @@ margin-bottom:20px;
 }
 
 }
+.chart-subtitle {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: -6px;
+    margin-bottom: 12px;
+}

@@ -46,6 +46,8 @@ FROM categories c
 LEFT JOIN expenses e 
 ON c.name = e.category 
 AND e.user_id = $user_id
+AND MONTH(e.expense_date) = MONTH(CURDATE())
+AND YEAR(e.expense_date) = YEAR(CURDATE())
 WHERE c.user_id = $user_id
 GROUP BY c.name
 ");
@@ -53,9 +55,11 @@ GROUP BY c.name
 $categories = [];
 $categoryTotals = [];
 
-while($row = $categoryQuery->fetch_assoc()){
-    $categories[] = $row['category'];
-    $categoryTotals[] = $row['total'];
+if($categoryQuery){
+    while($row = $categoryQuery->fetch_assoc()){
+        $categories[] = $row['category'];
+        $categoryTotals[] = $row['total'];
+    }
 }
 
 /* ======================
@@ -91,23 +95,34 @@ $dayTotals[] = $row['total'];
 ====================== */
 
 $weeklyTotals = [];
+$weekLabels = [];
 
+// Get current week's Monday
+$currentMonday = strtotime('monday this week');
+
+// 🔥 CHANGE: only 4 weeks
 for ($i = 3; $i >= 0; $i--) {
 
-$start = date("Y-m-d", strtotime("-".(($i+1)*7)." days"));
-$end = date("Y-m-d", strtotime("-".($i*7)." days"));
+    // Week start (Monday)
+    $start = date("Y-m-d", strtotime("-$i week", $currentMonday));
 
-$query = $conn->query("
-SELECT SUM(amount) as total
-FROM expenses
-WHERE user_id=$user_id
-AND expense_date BETWEEN '$start' AND '$end'
-");
+    // Week end (Sunday)
+    $end = date("Y-m-d", strtotime("+6 days", strtotime($start)));
 
-$data = $query->fetch_assoc();
+    // Label (Mar 04 - Mar 10)
+    $label = date("M d", strtotime($start)) . " - " . date("M d", strtotime($end));
+    $weekLabels[] = $label;
 
-$weeklyTotals[] = $data['total'] ?? 0;
+    // Query
+    $query = $conn->query("
+        SELECT SUM(amount) AS total 
+        FROM expenses 
+        WHERE user_id = $user_id
+        AND expense_date BETWEEN '$start' AND '$end'
+    ");
 
+    $row = $query->fetch_assoc();
+    $weeklyTotals[] = $row['total'] ? (float)$row['total'] : 0;
 }
 
 
@@ -412,11 +427,13 @@ $i++;
 
 <div class="chart-card">
 <h3>Weekly Comparison</h3>
+<p class="chart-subtitle">Last 4 weeks spending</p>
 <canvas id="barChart"></canvas>
 </div>
 
 <div class="chart-card">
 <h3>Category Distribution</h3>
+<p class="chart-subtitle">This month's breakdown</p>
 <canvas id="pieChart"></canvas>
 </div>
 
@@ -428,6 +445,7 @@ $i++;
 <div class="recent-card">
 
 <h3>Recent Transactions</h3>
+<p class="chart-subtitle">Latest expense activities</p>
 
 <?php if($recentQuery && $recentQuery->num_rows > 0): ?>
 
@@ -501,11 +519,10 @@ x:{grid:{display:false}}
 
 
 /* WEEKLY BAR */
-
 new Chart(document.getElementById('barChart'),{
 type:'bar',
 data:{
-labels:['Week 1','Week 2','Week 3','Week 4'],
+labels: <?php echo json_encode($weekLabels); ?>,
 datasets:[{
 data: <?php echo json_encode($weeklyTotals); ?>,
 backgroundColor:[
@@ -526,7 +543,6 @@ x:{grid:{display:false}}
 }
 }
 });
-
 
 /* CATEGORY PIE */
 

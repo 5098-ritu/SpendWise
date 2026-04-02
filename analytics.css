@@ -584,3 +584,16 @@ max-height:280px !important;
 #trendChart{
 height:300px !important;
 }
+/* ===== FULL WIDTH ROW FIX ===== */
+
+.full-row {
+    grid-column: 1 / -1;
+}
+
+/* Optional: make it look bigger */
+.full-row canvas {
+    height: 320px !important;
+}
+.chart-card canvas {
+    height: 300px !important;
+}

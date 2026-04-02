@@ -65,8 +65,6 @@ if($q){
 $avg_month=$q->fetch_assoc()['avg_total'];
 }
 
-
-
 /* CATEGORY DATA */
 
 $categories=[];
@@ -87,16 +85,12 @@ $categories[]=$r['category'];
 $categoryTotals[]=$r['total'];
 }
 }
-
-
-
-/* MONTH TREND */
+/* LAST 10 MONTHS DATA (MONTH-OVER-MONTH) */
 
 $months = [];
 $monthTotals = [];
 
-/* LAST 6 MONTHS FIXED ARRAY */
-for($i = 7; $i >= 0; $i--){
+for($i = 9; $i >= 0; $i--){
 
     $monthLabel = date("M", strtotime("-$i months"));
     $monthNum   = date("m", strtotime("-$i months"));
@@ -105,68 +99,39 @@ for($i = 7; $i >= 0; $i--){
     $months[] = $monthLabel;
 
     $q = $conn->query("
-    SELECT IFNULL(SUM(amount),0) as total
-    FROM expenses
-    WHERE user_id=$user_id
-    AND type='expense'
-    AND MONTH(expense_date)='$monthNum'
-    AND YEAR(expense_date)='$yearNum'
+        SELECT IFNULL(SUM(amount),0) as total
+        FROM expenses
+        WHERE user_id = $user_id
+        AND type = 'expense'
+        AND MONTH(expense_date) = '$monthNum'
+        AND YEAR(expense_date) = '$yearNum'
     ");
 
-    if($q){
-        $row = $q->fetch_assoc();
-        $monthTotals[] = $row['total'];
-    }else{
-        $monthTotals[] = 0;
-    }
+    $row = $q->fetch_assoc();
+    $monthTotals[] = $row['total'];
 }
+/* LAST 8 WEEKS FROM TODAY */
+$weeks = [];
+$weekTotals = [];
 
+/* Create fixed 8 weeks (W1 → W8) */
+for($i = 7; $i >= 0; $i--) {
 
+    $start = date("Y-m-d", strtotime("-".($i*7 + 6)." days"));
+    $end   = date("Y-m-d", strtotime("-".($i*7)." days"));
 
-/* WEEK TREND */
+    $weeks[] = "W".(8 - $i); // W1, W2 ... W8
 
-$weeks=[];
-$weekTotals=[];
+    $q = $conn->query("
+        SELECT IFNULL(SUM(amount),0) as total
+        FROM expenses
+        WHERE user_id = $user_id
+        AND type='expense'
+        AND expense_date BETWEEN '$start' AND '$end'
+    ");
 
-$q=$conn->query("
-SELECT WEEK(expense_date,1) wk,SUM(amount) total
-FROM expenses
-WHERE user_id=$user_id
-AND type='expense'
-GROUP BY YEAR(expense_date),WEEK(expense_date,1)
-ORDER BY YEAR(expense_date) DESC,WEEK(expense_date,1) DESC
-LIMIT 8
-");
-
-if($q){
-while($r=$q->fetch_assoc()){
-$weeks[]="W".$r['wk'];
-$weekTotals[]=$r['total'];
-}
-}
-
-$weeks=array_reverse($weeks);
-$weekTotals=array_reverse($weekTotals);
-
-
-
-/* DAY OF WEEK */
-
-$dayTotals=[0,0,0,0,0,0,0];
-
-$q=$conn->query("
-SELECT DAYOFWEEK(expense_date) d,SUM(amount) total
-FROM expenses
-WHERE user_id=$user_id
-AND type='expense'
-GROUP BY DAYOFWEEK(expense_date)
-");
-
-if($q){
-while($r=$q->fetch_assoc()){
-$index=$r['d']-1;
-$dayTotals[$index]=$r['total'];
-}
+    $row = $q->fetch_assoc();
+    $weekTotals[] = (float)$row['total'];
 }
 
 
@@ -394,9 +359,9 @@ $suggestion = "Nice work! You are managing your expenses well.";
 
 <!-- MONTH TREND -->
 
-<div class="chart-card">
-
+<div class="chart-card full-row">
 <h3>8-Month Spending Trend</h3>
+<p  class="analysis-sub">Track your monthly expenses over time</p>
 
 <canvas id="trendChart"></canvas>
 
@@ -409,8 +374,8 @@ $suggestion = "Nice work! You are managing your expenses well.";
 <div class="two-col">
 
 <div class="chart-card">
-
 <h3>Month-over-Month Comparison</h3>
+<p class="analysis-sub">Last 10 months spending comparison</p>
 
 <canvas id="barChart"></canvas>
 
@@ -418,8 +383,8 @@ $suggestion = "Nice work! You are managing your expenses well.";
 
 
 <div class="chart-card">
-
 <h3>Spending Distribution</h3>
+<p class="analysis-sub">Total expenses by category</p>
 
 <canvas id="pieChart"></canvas>
 
@@ -427,32 +392,20 @@ $suggestion = "Nice work! You are managing your expenses well.";
 
 </div>
 
+<!-- FULL WIDTH 8-WEEK -->
+<div class="chart-card full-row">
 
+<!-- FULL WIDTH 8-WEEK -->
+<div class="chart-card full-row">
 
-<!-- WEEK + DAY -->
+<h3>Last 8-Week Spending Pattern</h3>
+<p class="analysis-sub">Weekly expense trends</p>
 
-<div class="two-col">
-
-<div class="chart-card">
-
-<h3>8-Week Spending Pattern</h3>
-
-<canvas id="weekChart"></canvas>
-
-</div>
-
-
-<div class="chart-card">
-
-<h3>Spending by Day of Week</h3>
-
-<canvas id="dayChart"></canvas>
+<canvas id="weekChart"></canvas>  
 
 </div>
 
 </div>
-
-
 
 <!-- CATEGORY ANALYSIS -->
 <?php
@@ -548,7 +501,8 @@ data:{
 labels: <?php echo json_encode(!empty($months)?$months:['No Data']); ?>,
 
 datasets:[{
-data: <?php echo json_encode(!empty($monthTotals)?$monthTotals:[0]); ?>,
+    label:'Monthly Expenses',   
+    data: <?php echo json_encode(!empty($monthTotals)?$monthTotals:[0]); ?>,
 borderColor:'#3b82f6',
 backgroundColor:'rgba(59,130,246,0.2)',
 fill:true,
@@ -565,17 +519,16 @@ maintainAspectRatio:false
 
 
 
-/* BAR CHART */
-
 new Chart(document.getElementById('barChart'),{
 
 type:'bar',
 
 data:{
-labels: <?php echo json_encode(!empty($categories)?$categories:['None']); ?>,
+labels: <?php echo json_encode(!empty($months)?$months:['No Data']); ?>,
 
 datasets:[{
-data: <?php echo json_encode(!empty($categoryTotals)?$categoryTotals:[0]); ?>,
+label: 'Month-wise Expenses',   // ✅ fixes "undefined"
+data: <?php echo json_encode(!empty($monthTotals)?$monthTotals:[0]); ?>,
 backgroundColor:'#3b82f6'
 }]
 },
@@ -586,7 +539,6 @@ maintainAspectRatio:false
 }
 
 });
-
 
 
 /* PIE */
@@ -617,53 +569,51 @@ maintainAspectRatio:false
 }
 
 });
-/* WEEK CHART */
 
-new Chart(document.getElementById('weekChart'),{
+const isDark = document.body.classList.contains("dark");
 
-type:'line',
-
-data:{
-labels: <?php echo json_encode(!empty($weeks)?$weeks:['W1']); ?>,
-
-datasets:[{
-data: <?php echo json_encode(!empty($weekTotals)?$weekTotals:[0]); ?>,
-borderColor:'#10b981',
-backgroundColor:'rgba(16,185,129,0.2)',
-fill:true,
-tension:0.4
-}]
-},
-options:{
-responsive:true,
-maintainAspectRatio:false
-}
-
+new Chart(document.getElementById('weekChart'), {
+    type: 'line',
+    data: {
+        labels: <?php echo json_encode($weeks); ?>,
+        datasets: [{
+            data: <?php echo json_encode($weekTotals); ?>,
+            borderColor: isDark ? '#34d399' : '#10b981',
+            backgroundColor: 'transparent',
+            tension: 0.4,
+            pointBackgroundColor: isDark ? '#34d399' : '#10b981',
+            pointRadius: 5,
+            fill: false
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: isDark ? '#e5e7eb' : '#374151',
+                    callback: (v) => '₹ ' + v
+                },
+                grid: {
+                    color: isDark ? '#374151' : '#e5e7eb'
+                }
+            },
+            x: {
+                ticks: {
+                    color: isDark ? '#e5e7eb' : '#374151'
+                },
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
 });
-
-
-
-/* DAY CHART */
-
-new Chart(document.getElementById('dayChart'),{
-
-type:'bar',
-
-data:{
-labels:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
-
-datasets:[{
-data: <?php echo json_encode($dayTotals); ?>,
-backgroundColor:'#f59e0b'
-
-}]
-},
-options:{
-responsive:true,
-maintainAspectRatio:false
-}
-});
-
 </script>
 
 <script>
