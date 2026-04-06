@@ -97,19 +97,18 @@ $dayTotals[] = $row['total'];
 $weeklyTotals = [];
 $weekLabels = [];
 
-// Get current week's Monday
+/* ALWAYS GET CURRENT WEEK MONDAY */
 $currentMonday = strtotime('monday this week');
 
-// 🔥 CHANGE: only 4 weeks
 for ($i = 3; $i >= 0; $i--) {
 
-    // Week start (Monday)
+    // Start of week
     $start = date("Y-m-d", strtotime("-$i week", $currentMonday));
 
-    // Week end (Sunday)
+    // End of week
     $end = date("Y-m-d", strtotime("+6 days", strtotime($start)));
 
-    // Label (Mar 04 - Mar 10)
+    // Label
     $label = date("M d", strtotime($start)) . " - " . date("M d", strtotime($end));
     $weekLabels[] = $label;
 
